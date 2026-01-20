@@ -19,13 +19,13 @@ export const MOCK_TOURNAMENTS: Tournament[] = [
     title: 'Bermuda Clash Championship',
     type: TournamentType.SQUAD,
     status: TournamentStatus.UPCOMING,
-    entryFee: 50,
-    prizePool: 2500,
+    entryFee: 100,
+    prizePool: 1000,
     map: 'Bermuda',
     startTime: '2024-06-15 18:00',
     participants: 12,
     maxParticipants: 48,
-    description: 'Elite squad battle on the classic Bermuda map. Winner takes home the lion share of 2.5K gold.'
+    description: 'Elite squad battle on the classic Bermuda map. Winner takes home the lion share of ₹1,000.'
   },
   {
     id: 't2',
@@ -39,6 +39,19 @@ export const MOCK_TOURNAMENTS: Tournament[] = [
     participants: 24,
     maxParticipants: 24,
     description: 'Fast paced duo survival in the treacherous terrains of Purgatory.'
+  },
+  {
+    id: 't5',
+    title: 'Lone Wolf: Iron Cage 1v1',
+    type: TournamentType.LONE_WOLF,
+    status: TournamentStatus.UPCOMING,
+    entryFee: 50,
+    prizePool: 80,
+    map: 'Iron Cage',
+    startTime: '2024-06-17 15:00',
+    participants: 1,
+    maxParticipants: 2,
+    description: 'The ultimate skill test. Strictly one on one battle in the Iron Cage. No help, just pure aim and gloo wall skills. Win ₹80 prize.'
   },
   {
     id: 't3',
@@ -58,13 +71,13 @@ export const MOCK_TOURNAMENTS: Tournament[] = [
     title: 'Squad Rush Night',
     type: TournamentType.SQUAD,
     status: TournamentStatus.COMPLETED,
-    entryFee: 40,
-    prizePool: 2000,
+    entryFee: 100,
+    prizePool: 1000,
     map: 'Bermuda Remastered',
     startTime: '2024-06-12 20:00',
     participants: 48,
     maxParticipants: 48,
-    description: 'High stakes squad combat under the neon lights.'
+    description: 'High stakes squad combat under the neon lights. Massive ₹1,000 prize pool.'
   }
 ];
 

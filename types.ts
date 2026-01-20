@@ -2,7 +2,8 @@
 export enum TournamentType {
   SOLO = 'SOLO',
   DUO = 'DUO',
-  SQUAD = 'SQUAD'
+  SQUAD = 'SQUAD',
+  LONE_WOLF = 'LONE_WOLF'
 }
 
 export enum TournamentStatus {
