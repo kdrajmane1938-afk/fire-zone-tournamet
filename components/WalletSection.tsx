@@ -5,10 +5,10 @@ import { MOCK_TRANSACTIONS } from '../constants';
 
 interface WalletSectionProps {
   user: User;
-  onDeposit: (amount: number) => void;
+  onDepositRequest: (amount: number, transactionId: string) => void;
 }
 
-const WalletSection: React.FC<WalletSectionProps> = ({ user, onDeposit }) => {
+const WalletSection: React.FC<WalletSectionProps> = ({ user, onDepositRequest }) => {
   const [depositAmount, setDepositAmount] = useState('100');
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [transactionId, setTransactionId] = useState('');
@@ -23,13 +23,13 @@ const WalletSection: React.FC<WalletSectionProps> = ({ user, onDeposit }) => {
     if (!transactionId.trim()) return;
     
     setIsVerifying(true);
-    // Simulate verification delay
+    // Simulate initial submission delay
     setTimeout(() => {
-      onDeposit(Number(depositAmount));
+      onDepositRequest(Number(depositAmount), transactionId);
       setIsVerifying(false);
       setShowPaymentModal(false);
       setTransactionId('');
-    }, 2000);
+    }, 1500);
   };
 
   return (
@@ -103,7 +103,6 @@ const WalletSection: React.FC<WalletSectionProps> = ({ user, onDeposit }) => {
                 <tr>
                   <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase">Description</th>
                   <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase">Type</th>
-                  <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase">Date</th>
                   <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase text-right">Amount</th>
                 </tr>
               </thead>
@@ -120,7 +119,6 @@ const WalletSection: React.FC<WalletSectionProps> = ({ user, onDeposit }) => {
                         {tx.type}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-slate-400 text-sm">{tx.date}</td>
                     <td className={`px-6 py-4 text-right font-bold gaming-font ${
                       ['DEPOSIT', 'WINNING'].includes(tx.type) ? 'text-green-500' : 'text-red-500'
                     }`}>
@@ -149,17 +147,16 @@ const WalletSection: React.FC<WalletSectionProps> = ({ user, onDeposit }) => {
                 <h4 className="text-2xl font-bold text-white">Amrut 3</h4>
               </div>
 
-              {/* QR Code Placeholder with Real Data */}
               <div className="bg-white p-6 rounded-3xl inline-block shadow-lg">
                 <img 
-                  src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=upi://pay?pa=amrut8301@okhdfcbank&pn=Amrut%203&am=${depositAmount}&cu=INR" 
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=upi://pay?pa=amrut8301@okhdfcbank&pn=Amrut%203&am=${depositAmount}&cu=INR`} 
                   alt="Bank QR Code"
                   className="w-48 h-48 sm:w-56 sm:h-56"
                 />
               </div>
 
               <div className="space-y-1">
-                <p className="text-slate-400 text-sm font-semibold">UPI ID: <span className="text-white select-all">amrut8301@okhdfcbank</span></p>
+                <p className="text-slate-400 text-sm font-semibold">UPI ID: amrut8301@okhdfcbank</p>
                 <p className="text-orange-500 font-bold text-2xl gaming-font mt-2">Amount: ₹{depositAmount}</p>
               </div>
 
@@ -170,27 +167,15 @@ const WalletSection: React.FC<WalletSectionProps> = ({ user, onDeposit }) => {
                   placeholder="12 digit Ref Number"
                   value={transactionId}
                   onChange={(e) => setTransactionId(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-700 rounded-xl py-3 px-4 focus:outline-none focus:border-orange-500 font-bold text-lg text-white placeholder:text-slate-600"
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl py-3 px-4 focus:outline-none focus:border-orange-500 font-bold text-lg text-white"
                 />
                 <button 
                   onClick={handleConfirmPayment}
                   disabled={!transactionId.trim() || isVerifying}
-                  className={`w-full py-4 rounded-xl font-bold uppercase tracking-widest transition-all ${
-                    transactionId.trim() && !isVerifying
-                      ? 'bg-green-600 hover:bg-green-500 text-white shadow-lg shadow-green-900/40' 
-                      : 'bg-slate-700 text-slate-500 cursor-not-allowed'
-                  }`}
+                  className="w-full py-4 bg-orange-600 rounded-xl font-bold text-white uppercase tracking-widest hover:bg-orange-500 transition-all"
                 >
-                  {isVerifying ? (
-                    <span className="flex items-center justify-center gap-2">
-                      <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-                      VERIFYING...
-                    </span>
-                  ) : 'Confirm Payment'}
+                  {isVerifying ? 'SENDING REQUEST...' : 'Submit to Admin'}
                 </button>
-                <p className="text-[10px] text-slate-500 text-center leading-tight">
-                  Funds will be added instantly after successful verification of the UTR number.
-                </p>
               </div>
             </div>
           </div>

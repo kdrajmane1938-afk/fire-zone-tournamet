@@ -4,10 +4,15 @@ import { Transaction } from '../types';
 import { GLOBAL_DEPOSIT_HISTORY } from '../constants';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 
-const AdminSection: React.FC = () => {
+interface AdminSectionProps {
+  pendingDeposits: Transaction[];
+  onApprove: (id: string) => void;
+  onReject: (id: string) => void;
+}
+
+const AdminSection: React.FC<AdminSectionProps> = ({ pendingDeposits, onApprove, onReject }) => {
   const totalDeposits = GLOBAL_DEPOSIT_HISTORY.reduce((acc, curr) => acc + curr.amount, 0);
   
-  // Mock trend data for chart
   const trendData = [
     { day: 'Mon', amount: 4000 },
     { day: 'Tue', amount: 3000 },
@@ -21,47 +26,81 @@ const AdminSection: React.FC = () => {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h2 className="text-3xl font-bold gaming-font uppercase tracking-wider text-white">Admin Control Center</h2>
-          <p className="text-slate-400 text-sm">Real-time platform financial monitoring</p>
-        </div>
-        <div className="flex gap-2">
-          <span className="px-3 py-1 bg-green-500/10 text-green-500 border border-green-500/20 rounded-full text-xs font-bold flex items-center gap-2">
-            <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
-            SYSTEM ONLINE
-          </span>
+          <p className="text-slate-400 text-sm">Review deposits and manage the platform</p>
         </div>
       </div>
 
-      {/* Admin Stats Grid */}
+      {/* HOW TO GO LIVE - GUIDE */}
+      <div className="bg-gradient-to-r from-indigo-900 to-slate-900 p-6 rounded-3xl border border-indigo-500/30">
+        <h3 className="text-xl font-bold text-white gaming-font mb-4 flex items-center gap-2">
+          🚀 HOW TO MAKE THIS APP LIVE (FOR PLAYERS)
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="bg-black/30 p-4 rounded-xl space-y-2">
+            <span className="text-indigo-400 font-bold">STEP 1</span>
+            <p className="text-xs text-slate-300">Create a free account on <a href="https://vercel.com" target="_blank" className="text-orange-500 underline">Vercel.com</a></p>
+          </div>
+          <div className="bg-black/30 p-4 rounded-xl space-y-2">
+            <span className="text-indigo-400 font-bold">STEP 2</span>
+            <p className="text-xs text-slate-300">Connect your GitHub and upload these files.</p>
+          </div>
+          <div className="bg-black/30 p-4 rounded-xl space-y-2">
+            <span className="text-indigo-400 font-bold">STEP 3</span>
+            <p className="text-xs text-slate-300">Share your new "vercel.app" link with players!</p>
+          </div>
+        </div>
+      </div>
+
+      {/* PENDING APPROVALS */}
+      <div className="space-y-4">
+        <h3 className="text-xl font-bold gaming-font text-orange-500 uppercase tracking-widest">
+          Pending Deposits ({pendingDeposits.length})
+        </h3>
+        {pendingDeposits.length === 0 ? (
+          <div className="bg-slate-800/50 p-8 rounded-2xl border border-dashed border-slate-700 text-center text-slate-500">
+            No pending deposits to verify.
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-4">
+            {pendingDeposits.map(tx => (
+              <div key={tx.id} className="bg-slate-800 p-6 rounded-2xl border border-slate-700 flex flex-col md:flex-row justify-between items-center gap-4">
+                <div className="space-y-1 text-center md:text-left">
+                  <p className="text-white font-bold">{tx.username || 'Unknown Player'}</p>
+                  <p className="text-xs text-slate-400">UTR: <span className="text-orange-400 font-mono">{tx.id}</span></p>
+                </div>
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-green-500 gaming-font">₹{tx.amount}</p>
+                </div>
+                <div className="flex gap-2">
+                  <button 
+                    onClick={() => onReject(tx.id)}
+                    className="px-6 py-2 bg-red-500/10 text-red-500 border border-red-500/20 rounded-lg text-xs font-bold hover:bg-red-500 hover:text-white transition-all"
+                  >
+                    REJECT
+                  </button>
+                  <button 
+                    onClick={() => onApprove(tx.id)}
+                    className="px-6 py-2 bg-green-600 text-white rounded-lg text-xs font-bold hover:bg-green-500 shadow-lg shadow-green-900/20 transition-all"
+                  >
+                    APPROVE
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-slate-800 p-6 rounded-3xl border border-slate-700">
           <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">Platform Total Deposits</p>
           <div className="mt-2 flex items-baseline gap-2">
             <h3 className="text-4xl font-bold gaming-font text-white">₹{totalDeposits.toLocaleString()}</h3>
-            <span className="text-green-500 text-xs font-bold">+12.5%</span>
           </div>
-          <p className="mt-4 text-xs text-slate-500">Across {GLOBAL_DEPOSIT_HISTORY.length} transactions today</p>
         </div>
-
-        <div className="bg-slate-800 p-6 rounded-3xl border border-slate-700">
-          <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">Active Players</p>
-          <div className="mt-2 flex items-baseline gap-2">
-            <h3 className="text-4xl font-bold gaming-font text-white">1,482</h3>
-            <span className="text-green-500 text-xs font-bold">+4%</span>
-          </div>
-          <p className="mt-4 text-xs text-slate-500">Currently browsing or playing</p>
-        </div>
-
-        <div className="bg-slate-800 p-6 rounded-3xl border border-slate-700">
-          <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">Net Revenue</p>
-          <div className="mt-2 flex items-baseline gap-2">
-            <h3 className="text-4xl font-bold gaming-font text-orange-500">₹45,210</h3>
-            <span className="text-orange-500 text-xs font-bold">+8.2%</span>
-          </div>
-          <p className="mt-4 text-xs text-slate-500">Platform fees from entries</p>
-        </div>
+        {/* Other stats... */}
       </div>
 
-      {/* Analytics Chart */}
       <div className="bg-slate-800 p-6 rounded-3xl border border-slate-700">
         <h3 className="text-lg font-bold gaming-font text-white mb-6 uppercase tracking-wider">Deposit Velocity (Weekly)</h3>
         <div className="h-[300px] w-full">
@@ -83,49 +122,6 @@ const AdminSection: React.FC = () => {
               <Area type="monotone" dataKey="amount" stroke="#f97316" fillOpacity={1} fill="url(#colorAmt)" strokeWidth={3} />
             </AreaChart>
           </ResponsiveContainer>
-        </div>
-      </div>
-
-      {/* Global Transaction Table */}
-      <div className="space-y-4">
-        <div className="flex justify-between items-center">
-          <h3 className="text-xl font-bold gaming-font text-white uppercase">User Deposit Logs</h3>
-          <button className="text-xs font-bold text-orange-500 hover:underline">EXPORT CSV</button>
-        </div>
-        <div className="bg-slate-800 rounded-3xl border border-slate-700 overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left">
-              <thead className="bg-slate-900/50 border-b border-slate-700">
-                <tr>
-                  <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase">Player Username</th>
-                  <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase">Method</th>
-                  <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase">Time</th>
-                  <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase text-right">Amount</th>
-                  <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase text-center">Status</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-700">
-                {GLOBAL_DEPOSIT_HISTORY.map((tx) => (
-                  <tr key={tx.id} className="hover:bg-slate-700/30 transition-colors">
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center text-[10px] font-bold text-slate-300">
-                          {tx.username?.substring(0, 2).toUpperCase()}
-                        </div>
-                        <span className="font-semibold text-slate-200">{tx.username}</span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 text-slate-400 text-sm italic">{tx.description}</td>
-                    <td className="px-6 py-4 text-slate-500 text-xs">{tx.date}</td>
-                    <td className="px-6 py-4 text-right font-bold text-green-500 gaming-font">₹{tx.amount}</td>
-                    <td className="px-6 py-4 text-center">
-                      <span className="px-2 py-0.5 bg-green-500/10 text-green-500 rounded text-[10px] font-bold">COMPLETED</span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
         </div>
       </div>
     </div>
