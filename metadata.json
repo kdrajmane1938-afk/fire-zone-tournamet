@@ -1,0 +1,8 @@
+{
+  "name": "FireZone Tournaments",
+  "description": "A premium Free Fire tournament platform with real-time dashboards, wallet management, and AI-powered battle strategies.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
